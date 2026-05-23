@@ -2,7 +2,7 @@
 
 An interactive risk communication tool that teaches how return periods and Annual Exceedance Probabilities (AEP) translate into real-world likelihood across different decision timeframes.
 
-Built with [Resilience Explorer®](https://urbanintelligence.co.nz) branding by Urban Intelligence.
+Built for [Resilience Explorer®](https://resilience-explorer.com) by Urban Intelligence.
 
 ## What it does
 
