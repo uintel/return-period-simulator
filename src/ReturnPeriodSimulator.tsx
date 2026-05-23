@@ -226,11 +226,9 @@ export default function ReturnPeriodSimulator() {
   return (
     <div className="w-full max-w-6xl mx-auto p-4 sm:p-6 bg-white text-[#0b2948] font-sans flex flex-col gap-5">
 
-      {/* ── Full-width main card ── */}
+      {/* ── Header ── */}
       <div className="rounded-2xl shadow-sm border border-slate-200 bg-white overflow-hidden">
         <div className="p-5 sm:p-7">
-
-          {/* Header */}
           <div className="flex items-start justify-between gap-4 mb-6">
             <div>
               <p className="text-xs uppercase tracking-widest text-[#2e76bc] font-semibold mb-1">
@@ -256,18 +254,18 @@ export default function ReturnPeriodSimulator() {
             </button>
           </div>
 
-          {/* Step 1 & 2 */}
+          {/* ── Compact pickers ── */}
           <div className="grid md:grid-cols-2 gap-4">
 
-            {/* Return period picker */}
-            <div className="rounded-xl border border-slate-200 p-4">
-              <label className="text-sm font-semibold text-[#0b2948]">1. Choose the event size</label>
-              <div className="mt-3 flex flex-wrap gap-2">
+            {/* Return period */}
+            <div>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Event size</p>
+              <div className="flex flex-wrap gap-2">
                 {RETURN_PERIODS.map((x) => (
                   <button
                     key={x}
                     onClick={() => { setAri(x); setYearResults([]); setFutures([]); setHorizonEverCompleted(false); }}
-                    className={`px-3 py-2 rounded text-sm font-medium border transition-colors duration-150 ${
+                    className={`px-3 py-1.5 rounded text-sm font-medium border transition-colors duration-150 ${
                       ari === x
                         ? "bg-[#0b2948] text-white border-[#0b2948]"
                         : "bg-white hover:bg-[#f3f8fe] border-slate-200 text-[#0b2948]"
@@ -277,69 +275,35 @@ export default function ReturnPeriodSimulator() {
                   </button>
                 ))}
               </div>
-              <p className="text-sm text-slate-500 mt-3">
-                This event has a{" "}
-                <span className="font-semibold text-[#0b2948]">{toFrequency(aep)}</span>{" "}
-                ({pct(aep, ari >= 100 ? 2 : 1)}) chance of occurring in any given year.
+              <p className="text-sm text-slate-500 mt-2">
+                <span className="font-semibold text-[#0b2948]">1 in {ari}</span>
+                {" "}({pct(aep, ari >= 100 ? 2 : 1)}) chance each year
               </p>
             </div>
 
-            {/* Horizon picker */}
-            <div className="rounded-xl border border-slate-200 p-4">
-              <label className="text-sm font-semibold text-[#0b2948]">2. Choose the decision timeframe</label>
-              <p className="text-sm text-slate-500 mt-2">
-                The longer something exists, the more chances there are for the event to occur.
-              </p>
-              <div className="mt-4 overflow-hidden rounded-xl border border-slate-200">
-                {HORIZONS.map((h, i) => (
+            {/* Horizon */}
+            <div>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Decision timeframe</p>
+              <div className="flex flex-wrap gap-2">
+                {HORIZONS.map((h) => (
                   <button
                     key={h.years}
                     onClick={() => { setYears(h.years); setYearResults([]); setFutures([]); setHorizonEverCompleted(false); }}
-                    className={`w-full text-left px-4 py-3 transition-colors duration-150 flex items-start justify-between gap-4 ${
+                    className={`px-3 py-1.5 rounded text-sm font-medium border transition-colors duration-150 ${
                       years === h.years
-                        ? "bg-[#0b2948] text-white"
-                        : "bg-white hover:bg-[#f3f8fe] text-[#0b2948]"
-                    } ${i !== HORIZONS.length - 1 ? "border-b border-slate-200" : ""}`}
+                        ? "bg-[#0b2948] text-white border-[#0b2948]"
+                        : "bg-white hover:bg-[#f3f8fe] border-slate-200 text-[#0b2948]"
+                    }`}
                   >
-                    <div>
-                      <p className="font-semibold text-sm">{h.label}: {h.decision}</p>
-                      <p className={`text-xs mt-0.5 ${years === h.years ? "text-white/70" : "text-slate-500"}`}>
-                        {h.detail}
-                      </p>
-                    </div>
+                    {h.label}
                   </button>
                 ))}
               </div>
+              <p className="text-sm text-slate-500 mt-2">
+                <span className="font-semibold text-[#0b2948]">{horizon.decision}</span>
+                {" — "}{horizon.detail}
+              </p>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Full-width stats panel ── */}
-      <div className="rounded-xl bg-[#0b2948] text-white p-5 overflow-hidden relative">
-        <motion.div
-          animate={spinning ? { rotate: 360 } : { rotate: 0 }}
-          transition={{ duration: 0.45, ease: "easeOut" }}
-          className="absolute -right-10 -top-10 h-36 w-36 rounded-full border-[18px] border-[#62cadd]/20"
-        />
-        <div className="relative grid sm:grid-cols-3 gap-6">
-          <div>
-            <p className="text-white/60 text-xs uppercase tracking-wide mb-1">One yearly chance</p>
-            <p className="text-3xl font-semibold">{toFrequency(aep)}</p>
-            <p className="text-white/50 text-sm mt-0.5">{pct(aep, ari >= 100 ? 2 : 1)} per year</p>
-          </div>
-          <div>
-            <p className="text-white/60 text-xs uppercase tracking-wide mb-1">Over {years} years</p>
-            <p className="text-3xl font-semibold">{toFrequency(cumulative)}</p>
-            <p className="text-white/50 text-sm mt-0.5">{pct(cumulative, 1)} chance of at least one event</p>
-            {comparatorText(cumulative) && (
-              <p className="text-[#62cadd] text-xs mt-2">{comparatorText(cumulative)}</p>
-            )}
-          </div>
-          <div>
-            <p className="text-white/60 text-xs uppercase tracking-wide mb-1">Plain-language label</p>
-            <p className="text-3xl font-semibold">{label}</p>
-            <p className="text-white/50 text-sm mt-0.5">for {horizon.decision.toLowerCase()}</p>
           </div>
         </div>
       </div>
@@ -351,7 +315,7 @@ export default function ReturnPeriodSimulator() {
         <div className="rounded-xl border border-slate-200 p-4 sm:p-5 bg-white">
           <div className="flex items-start justify-between mb-4 gap-3">
             <div>
-              <p className="font-semibold text-[#0b2948]">3. Explore one possible future</p>
+              <p className="font-semibold text-[#0b2948]">Explore one possible future</p>
               <p className="text-sm text-slate-500 mt-1">
                 Each box is one year. Red means the selected event (or larger) occurred. Grey means
                 that year passed without the event occurring.
@@ -484,6 +448,35 @@ export default function ReturnPeriodSimulator() {
             </button>
           </div>
         )}
+      </div>
+
+      {/* ── Stats panel — below simulation ── */}
+      <div className="rounded-xl bg-[#0b2948] text-white p-5 overflow-hidden relative">
+        <motion.div
+          animate={spinning ? { rotate: 360 } : { rotate: 0 }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+          className="absolute -right-10 -top-10 h-36 w-36 rounded-full border-[18px] border-[#62cadd]/20"
+        />
+        <div className="relative grid sm:grid-cols-3 gap-6">
+          <div>
+            <p className="text-white/60 text-xs uppercase tracking-wide mb-1">One yearly chance</p>
+            <p className="text-3xl font-semibold">1 in {ari}</p>
+            <p className="text-white/50 text-sm mt-0.5">{pct(aep, ari >= 100 ? 2 : 1)} per year</p>
+          </div>
+          <div>
+            <p className="text-white/60 text-xs uppercase tracking-wide mb-1">Over {years} years</p>
+            <p className="text-3xl font-semibold">{toFrequency(cumulative)}</p>
+            <p className="text-white/50 text-sm mt-0.5">{pct(cumulative, 1)} chance of at least one event</p>
+            {comparatorText(cumulative) && (
+              <p className="text-[#62cadd] text-xs mt-2">{comparatorText(cumulative)}</p>
+            )}
+          </div>
+          <div>
+            <p className="text-white/60 text-xs uppercase tracking-wide mb-1">Plain-language label</p>
+            <p className="text-3xl font-semibold">{label}</p>
+            <p className="text-white/50 text-sm mt-0.5">for {horizon.decision.toLowerCase()}</p>
+          </div>
+        </div>
       </div>
 
       {/* ── Full-width info panel at the bottom ── */}
