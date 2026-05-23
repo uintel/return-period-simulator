@@ -567,6 +567,44 @@ export default function ReturnPeriodSimulator() {
                   Formula: 1 − (1 − AEP)<sup>years</sup>, where AEP = 1 − e<sup>−1/ARI</sup>
                 </span>
               </div>
+
+              <div className="mt-4 pt-4 border-t border-[#2e76bc]/10">
+                <p className="text-xs font-semibold text-[#0b2948] uppercase tracking-wide mb-3">Read more</p>
+                <ul className="space-y-2 text-sm">
+                  <li>
+                    <a
+                      href="https://www.tandfonline.com/doi/full/10.1080/13669877.2025.2512082"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#2e76bc] hover:text-[#0b2948] hover:underline transition-colors"
+                    >
+                      Peters et al. (2025). The power of numbers in natural hazard communication. <i>Journal of Risk Research</i>.
+                    </a>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <a
+                      href="https://api.resilience-explorer.com/auth/login?return_path=%2Fapp%2Fguide%2Ffundamentals%2Fhazards-and-stressors%2Funderstanding-return-periods-and-ae-ps"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#2e76bc] hover:text-[#0b2948] hover:underline transition-colors"
+                    >
+                      Understanding return periods and AEPs
+                    </a>
+                    <span className="text-xs text-slate-400 mt-0.5 shrink-0">Resilience Explorer® subscribers</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <a
+                      href="https://api.resilience-explorer.com/auth/login?return_path=%2Fapp%2Fguide%2Finsights%2Fresearch-and-methods%2Fwhy-numbers-matter-in-hazard-communication"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#2e76bc] hover:text-[#0b2948] hover:underline transition-colors"
+                    >
+                      Why numbers matter in hazard communication
+                    </a>
+                    <span className="text-xs text-slate-400 mt-0.5 shrink-0">Resilience Explorer® subscribers</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
