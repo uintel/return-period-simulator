@@ -45,7 +45,7 @@ Pushes to `main` automatically build and deploy to GitHub Pages via the included
 
 The live URL will be:
 ```
-https://<your-org>.github.io/return-period-simulator/
+https://uintel.github.io/return-period-simulator/
 ```
 
 To enable: go to **Settings → Pages → Source** and select **GitHub Actions**.
@@ -56,7 +56,7 @@ The built app is a self-contained static site — no server required. Embed it i
 
 ```html
 <iframe
-  src="https://<your-org>.github.io/return-period-simulator/"
+  src="https://uintel.github.io/return-period-simulator/"
   width="100%"
   height="900"
   style="border:none;"
