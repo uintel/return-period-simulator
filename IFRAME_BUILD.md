@@ -36,46 +36,13 @@ After building, you can embed the simulator using:
 ></iframe>
 ```
 
-### Recommended iframe attributes:
-- `width="100%"` - Responsive width
-- `height="600"` or higher - Adequate height for the simulator (or use the dynamic height script below)
-- `frameborder="0"` and `style="border: none;"` - Remove default border
-- `title` - Accessibility label
-- `allow="fullscreen"` (optional) - If fullscreen functionality is needed
-
 ### Embedding in Framer
 
 The iframe includes automatic height detection and will send messages to the parent window with its height.
 
-**For Framer**, use the Embed component with this code:
-
-```jsx
-// Add this script to listen for height changes from the iframe
-<script>
-  window.addEventListener('message', function(e) {
-    if (e.data.type === 'iframe-height') {
-      const iframe = document.querySelector('iframe[src*="index.iframe.html"]');
-      if (iframe) {
-        iframe.style.height = e.data.height + 'px';
-      }
-    }
-  });
-</script>
-
-<iframe
-  src="https://your-domain.com/index.iframe.html"
-  width="100%"
-  style="border: none; width: 100%;"
-  title="Return Period Simulator"
-></iframe>
-```
-
-Alternatively, in Framer you can:
 1. Use the **Embed** component (not iframe)
 2. Paste the URL to your deployed `index.iframe.html`
 3. The height should automatically adjust
-
-If Framer still shows 0 height, set a minimum height in the Embed component settings (e.g., 600px) and the content will resize within it.
 
 ## Configuration Details
 
