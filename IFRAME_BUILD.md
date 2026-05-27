@@ -41,7 +41,7 @@ After building, you can embed the simulator using:
 The iframe includes automatic height detection and will send messages to the parent window with its height.
 
 1. Use the **Embed** component (not iframe)
-2. Paste the URL to your deployed `index.iframe.html`
+2. Paste the content of `index.iframe.html` to the content of the embed
 3. The height should automatically adjust
 
 ## Configuration Details
