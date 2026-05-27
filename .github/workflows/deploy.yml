@@ -29,11 +29,19 @@ jobs:
 
       - run: npm ci
       - run: npm run build
+      - run: npm run build:iframe
 
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+
+      - name: Upload iframe artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iframe-build
+          path: dist-iframe/index.iframe.html
+          retention-days: 90
 
       - uses: actions/deploy-pages@v4
         id: deployment
