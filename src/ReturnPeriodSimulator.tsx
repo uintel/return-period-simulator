@@ -7,9 +7,7 @@
 
 import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RotateCcw, Info, CalendarDays, Building2, Dice1, Dice2, Dice3, Dice4, Dice5, Dice6 } from "lucide-react";
-
-const DICE_ICONS = [Dice1, Dice2, Dice3, Dice4, Dice5, Dice6];
+import { RotateCcw, Info, CalendarDays, Building2 } from "lucide-react";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -124,6 +122,74 @@ function Timeline({ yearResults, years }: { yearResults: YearResult[]; years: nu
       <div className="flex justify-between text-xs text-slate-500 mt-1">
         <span>Year 1</span>
         <span>Year {years}</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Die component (SVG with pips) ───────────────────────────────────────────
+
+const PIP_POSITIONS: [number, number][][] = [
+  [[50, 50]],
+  [[28, 28], [72, 72]],
+  [[28, 28], [50, 50], [72, 72]],
+  [[28, 28], [72, 28], [28, 72], [72, 72]],
+  [[28, 28], [72, 28], [50, 50], [28, 72], [72, 72]],
+  [[28, 28], [72, 28], [28, 50], [72, 50], [28, 72], [72, 72]],
+];
+
+function Die({ face, spinning }: { face: number; spinning: boolean }) {
+  const pips = PIP_POSITIONS[Math.max(0, Math.min(5, face - 1))];
+  return (
+    <motion.div
+      animate={spinning ? { rotate: [0, -22, 22, -14, 14, -6, 6, 0], scale: [1, 1.3, 0.9, 1.15, 0.97, 1] } : {}}
+      transition={{ duration: 0.45, ease: "easeInOut" }}
+      className="shrink-0 drop-shadow-md"
+    >
+      <svg viewBox="0 0 100 100" width="52" height="52" aria-hidden>
+        {/* Face */}
+        <rect x="4" y="4" width="92" height="92" rx="20" fill="white" />
+        {/* Border */}
+        <rect x="4" y="4" width="92" height="92" rx="20" fill="none" stroke="#2e76bc" strokeWidth="4" />
+        {/* Subtle inner shadow line */}
+        <rect x="9" y="9" width="82" height="82" rx="16" fill="none" stroke="#0b2948" strokeWidth="1" opacity="0.06" />
+        {/* Pips */}
+        {pips.map(([cx, cy], i) => (
+          <circle key={i} cx={cx} cy={cy} r="9" fill="#0b2948" />
+        ))}
+      </svg>
+    </motion.div>
+  );
+}
+
+// ─── Probability ring ─────────────────────────────────────────────────────────
+
+function ProbabilityRing({ p }: { p: number }) {
+  const r = 34;
+  const circ = 2 * Math.PI * r;
+  const stroke = p >= 0.66 ? "#ef4444" : p >= 0.33 ? "#f59e0b" : "#62cadd";
+
+  return (
+    <div className="relative flex items-center justify-center shrink-0">
+      <svg width="72" height="72" viewBox="0 0 88 88" aria-hidden className="shrink-0">
+        {/* Track */}
+        <circle cx="44" cy="44" r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="10" />
+        {/* Progress — animate strokeDashoffset (a number) so Framer Motion can tween it */}
+        <motion.circle
+          cx="44" cy="44" r={r}
+          fill="none"
+          stroke={stroke}
+          strokeWidth="10"
+          strokeLinecap="round"
+          strokeDasharray={circ}
+          transform="rotate(-90 44 44)"
+          initial={{ strokeDashoffset: circ }}
+          animate={{ strokeDashoffset: circ * (1 - Math.min(p, 0.999)) }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        />
+      </svg>
+      <div className="absolute text-center pointer-events-none select-none">
+        <p className="text-white font-bold text-sm leading-none">{Math.round(p * 100)}%</p>
       </div>
     </div>
   );
@@ -300,8 +366,8 @@ export default function ReturnPeriodSimulator() {
                 ))}
               </div>
               <p className="text-sm text-slate-500 mt-2">
-                <span className="font-semibold text-[#0b2948]">{horizon.decision}</span>
-                {" — "}{horizon.detail}
+                <span className="font-semibold text-[#0b2948]">{horizon.decision}:</span>
+                {" "}{horizon.detail}
               </p>
             </div>
           </div>
@@ -335,19 +401,9 @@ export default function ReturnPeriodSimulator() {
               </button>
             ) : (
               <>
-                {/* Animated die */}
-                {(() => {
-                  const DieIcon = DICE_ICONS[dieFace];
-                  return (
-                    <motion.div
-                      animate={spinning ? { rotate: [0, -15, 15, -10, 10, 0], scale: [1, 1.2, 1] } : {}}
-                      transition={{ duration: 0.4 }}
-                      className="h-9 w-9 rounded-lg bg-[#f3f8fe] border border-[#2e76bc]/20 flex items-center justify-center shrink-0"
-                    >
-                      <DieIcon className="h-5 w-5 text-[#2e76bc]" />
-                    </motion.div>
-                  );
-                })()}
+                <button onClick={spinOneYear} className="focus:outline-none" aria-label={`Roll year ${currentYear}`}>
+                  <Die face={dieFace + 1} spinning={spinning} />
+                </button>
                 <button onClick={spinOneYear} className={btnPrimary}>
                   Roll year {currentYear}
                 </button>
@@ -451,27 +507,26 @@ export default function ReturnPeriodSimulator() {
       </div>
 
       {/* ── Stats panel — below simulation ── */}
-      <div className="rounded-xl bg-[#0b2948] text-white p-5 overflow-hidden relative">
-        <motion.div
-          animate={spinning ? { rotate: 360 } : { rotate: 0 }}
-          transition={{ duration: 0.45, ease: "easeOut" }}
-          className="absolute -right-10 -top-10 h-36 w-36 rounded-full border-[18px] border-[#62cadd]/20"
-        />
-        <div className="relative grid sm:grid-cols-3 gap-6">
-          <div>
+      <div className="rounded-xl bg-[#0b2948] text-white p-5 overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:divide-x sm:divide-white/10 gap-5 sm:gap-0">
+          <div className="sm:pr-6 shrink-0">
             <p className="text-white/60 text-xs uppercase tracking-wide mb-1">One yearly chance</p>
             <p className="text-3xl font-semibold">1 in {ari}</p>
             <p className="text-white/50 text-sm mt-0.5">{pct(aep, ari >= 100 ? 2 : 1)} per year</p>
           </div>
-          <div>
-            <p className="text-white/60 text-xs uppercase tracking-wide mb-1">Over {years} years</p>
-            <p className="text-3xl font-semibold">{toFrequency(cumulative)}</p>
-            <p className="text-white/50 text-sm mt-0.5">{pct(cumulative, 1)} chance of at least one event</p>
-            {comparatorText(cumulative) && (
-              <p className="text-[#62cadd] text-xs mt-2">{comparatorText(cumulative)}</p>
-            )}
+          {/* Ring + "Over X years" together */}
+          <div className="sm:px-6 flex items-center gap-4 flex-1">
+            <ProbabilityRing p={cumulative} />
+            <div>
+              <p className="text-white/60 text-xs uppercase tracking-wide mb-1">Over {years} years</p>
+              <p className="text-3xl font-semibold">{toFrequency(cumulative)}</p>
+              <p className="text-white/50 text-sm mt-0.5">{pct(cumulative, 1)} chance of at least one event</p>
+              {comparatorText(cumulative) && (
+                <p className="text-[#62cadd] text-xs mt-2">{comparatorText(cumulative)}</p>
+              )}
+            </div>
           </div>
-          <div>
+          <div className="sm:pl-6 shrink-0">
             <p className="text-white/60 text-xs uppercase tracking-wide mb-1">Plain-language label</p>
             <p className="text-3xl font-semibold">{label}</p>
             <p className="text-white/50 text-sm mt-0.5">for {horizon.decision.toLowerCase()}</p>
