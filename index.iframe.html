@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Return Period Simulator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      /* Reset margins for iframe embedding */
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100vh;
+        overflow: auto;
+      }
+      #root {
+        width: 100%;
+        min-height: 100vh;
+      }
+    </style>
+    <script>
+      // Send height to parent for iframe resizing (compatible with Framer and other platforms)
+      function sendHeight() {
+        const height = Math.max(
+          document.body.scrollHeight,
+          document.body.offsetHeight,
+          document.documentElement.clientHeight,
+          document.documentElement.scrollHeight,
+          document.documentElement.offsetHeight
+        );
+
+        // Send message to parent window
+        if (window.parent !== window) {
+          window.parent.postMessage({
+            type: 'iframe-height',
+            height: height
+          }, '*');
+        }
+      }
+
+      // Send height on load and resize
+      window.addEventListener('load', sendHeight);
+      window.addEventListener('resize', sendHeight);
+
+      // Also send after a short delay to catch dynamic content
+      setTimeout(sendHeight, 100);
+      setTimeout(sendHeight, 500);
+      setTimeout(sendHeight, 1000);
+
+      // Use ResizeObserver for more reliable height detection
+      if (typeof ResizeObserver !== 'undefined') {
+        const observer = new ResizeObserver(sendHeight);
+        observer.observe(document.body);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
